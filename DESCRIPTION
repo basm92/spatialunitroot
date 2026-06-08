@@ -1,0 +1,46 @@
+Package: spatialunitroot
+Type: Package
+Title: Spatial Unit Root Diagnostic Tests and Transformations
+Version: 0.1.0
+Authors@R: c(
+    person("Sascha O.", "Becker", role = "aut",
+           comment = "Original Stata code"),
+    person("P. David", "Boll", role = c("aut", "cre"),
+           email = "david.boll@warwick.ac.uk",
+           comment = "Original Stata code"),
+    person("Hans-Joachim", "Voth", role = "aut",
+           comment = "Original Stata code")
+    )
+Description: Implements spatial unit root diagnostic tests and spatial
+    differencing transformations from Muller and Watson (2024, Econometrica).
+    Provides functions to test for spatial unit roots (I(1) vs I(0) null
+    hypotheses), compute spatial half-life confidence intervals, and apply
+    spatial transformations (LBM-GLS, nearest-neighbor, isotropic, cluster)
+    to remove spatial unit roots. Integrates with the 'fixest' package for
+    fixed-effects regression.
+License: MIT + file LICENSE
+URL: https://github.com/pdavidboll/SPUR
+BugReports: https://github.com/pdavidboll/SPUR/issues
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.0.0)
+Imports:
+    fixest (>= 0.11.0),
+    Rcpp (>= 1.0.5),
+    Matrix,
+    stats,
+    graphics
+LinkingTo:
+    Rcpp,
+    RcppArmadillo
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    readxl,
+    ggplot2
+VignetteBuilder: knitr
+SystemRequirements: C++17
+Config/roxygen2/version: 8.0.0

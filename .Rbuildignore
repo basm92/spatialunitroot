@@ -1,0 +1,12 @@
+^spatialunitroot\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+^\.RData$
+^\.Ruserdata$
+^\.git$
+^\.github$
+^LICENSE\.md$
+^README\.Rmd$
+^data-raw$
+^source$
+^\.claude$
