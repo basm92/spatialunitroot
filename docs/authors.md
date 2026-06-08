@@ -6,15 +6,6 @@
   copyright holder.  
   R implementation
 
-- **Sascha O. Becker**. Contributor.  
-  Original Stata code
-
-- **P. David Boll**. Contributor.  
-  Original Stata code
-
-- **Hans-Joachim Voth**. Contributor.  
-  Original Stata code
-
 ## Citation
 
 Source:
