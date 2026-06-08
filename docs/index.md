@@ -8,20 +8,14 @@ package](https://github.com/pdavidboll/SPUR) by Becker, Boll & Voth
 (2025).
 
 **R developer & maintainer**: Bas Machielsen  
-**Original Stata code**: Sascha O. Becker, P. David Boll, Hans-Joachim
-Voth
+**Original Stata code** due to Sascha O. Becker, P. David Boll,
+Hans-Joachim Voth
 
 ## Installation
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("pdavidboll/SPUR", subdir = "spatialunitroot")  # adjust once on GitHub
-```
-
-Or from local source:
-
-``` r
-devtools::install("path/to/spatialunitroot")
+remotes::install_github("basm92/spatialunitroot") 
 ```
 
 ## Quick Start
@@ -99,9 +93,9 @@ coords = ~ x + y                     # Euclidean coordinates
 
 ## References
 
-- Becker, S. O., Boll, P. D., & Voth, H.-J. (2025). “Spatial Unit Roots
-  in Regressions: A Practitioner’s Guide and a Stata Package.” *Stata
-  Journal*, forthcoming.
+- Becker, S. O., Boll, P. D., & Voth, H. J. (2025). Spatial Unit Roots
+  in Regressions: A Practitioner’s Guide and a Stata Package. *Stata
+  Journal*.
 - Müller, U. K. & Watson, M. W. (2024). “Spatial Unit Roots and Spurious
   Regression.” *Econometrica*, 92, 1661–1695.
 - Müller, U. K. & Watson, M. W. (2022). “Spatial Correlation Robust

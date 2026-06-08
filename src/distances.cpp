@@ -23,11 +23,14 @@ arma::mat euclidean_distances(const arma::mat& coords) {
 
 //' Compute Haversine great-circle distance matrix
 //'
-//' Distances are divided by pi to match Stata convention (fraction of
-//' semi-circle, so max distance = 1).
+//' Returns asin(sqrt(haversine_term)) / pi for each pair, i.e. the central
+//' angle scaled by 1 / (2 * pi). This scaling is arbitrary because the tests
+//' normalize distances (dividing by the maximum), so any constant factor
+//' cancels. The great-circle distance in metres is recovered downstream by
+//' multiplying the raw value by 2 * pi * earth_radius (see spurhalflife()).
 //'
 //' @param coords n x 2 matrix with latitude in column 0, longitude in column 1
-//' @return n x n Haversine distance matrix (scaled by 1/pi)
+//' @return n x n matrix of central angles scaled by 1 / (2 * pi)
 // [[Rcpp::export]]
 arma::mat haversine_distances(const arma::mat& coords) {
     int n = coords.n_rows;

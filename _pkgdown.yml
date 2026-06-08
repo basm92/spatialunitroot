@@ -5,6 +5,10 @@ template:
 development:
   mode: auto
 
+authors:
+  Bas Machielsen:
+    href: "mailto:a.h.machielsen@uu.nl"
+
 reference:
   - title: "Spatial Unit Root Tests"
     desc: "Diagnostic tests for spatial unit roots"

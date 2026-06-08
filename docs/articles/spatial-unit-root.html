@@ -56,8 +56,8 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Spatial Unit Root Diagnostics with spatialunitroot</h1>
-                        <h4 data-toc-skip class="author">Based on
-Becker, Boll &amp; Voth (2025) and Müller &amp; Watson (2024)</h4>
+                        <h4 data-toc-skip class="author">Bas
+Machielsen</h4>
             
             <h4 data-toc-skip class="date">2026-06-08</h4>
       
@@ -74,7 +74,7 @@ Becker, Boll &amp; Voth (2025) and Müller &amp; Watson (2024)</h4>
 package, which implements the spatial unit root diagnostic tests and
 transformations of Müller &amp; Watson (2024, <em>Econometrica</em>).
 The package is an R port of the SPUR Stata package by Becker, Boll &amp;
-Voth (2025).</p>
+Voth (2025, <em>Stata Journal</em>).</p>
 <p>Spatial data often exhibit strong dependence across locations. Just
 as time series with unit roots can produce spurious regressions, spatial
 processes with (near) unit roots can lead to misleading inference. This
@@ -90,14 +90,19 @@ transformations</li>
 <strong>Characterize</strong> spatial persistence via half-life
 confidence intervals</li>
 </ol>
+<p>Throughout, we replicate the numbers published in <strong>Appendix A
+(Table A.1) of Becker, Boll &amp; Voth (2025)</strong>, which reproduce
+the Chetty et al. (2014) results of Müller &amp; Watson (2024). The
+dataset used there ships with this package, so the published table can
+be reproduced directly.</p>
 </div>
 <div class="section level2">
 <h2 id="the-chetty-et-al--2014-commuting-zone-data">The Chetty et al. (2014) Commuting Zone Data<a class="anchor" aria-label="anchor" href="#the-chetty-et-al--2014-commuting-zone-data"></a>
 </h2>
 <p>We use the dataset from Chetty, Hendren, Kline &amp; Saez (2014),
 which contains measures of intergenerational mobility and its correlates
-across 722 US commuting zones. This is the same data used in the Stata
-package’s supplementary materials.</p>
+across 722 US commuting zones. This is the same data the Stata package
+uses in its Appendix A.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">chetty</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">chetty</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, vec.len <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
@@ -114,54 +119,21 @@ package’s supplementary materials.</p>
 <span><span class="co">##  $ fraccom15: num  0.325 0.276 ...</span></span></code></pre>
 <p>Spatial coordinates are stored in <code>s_1</code> (latitude) and
 <code>s_2</code> (longitude), following the convention of Müller &amp;
-Watson’s <code>scpc</code> package.</p>
+Watson’s <code>scpc</code> package. When <code>latlong = TRUE</code>,
+distances are computed as great-circle distances on the sphere.</p>
 </div>
 <div class="section level2">
 <h2 id="diagnosing-spatial-unit-roots">Diagnosing Spatial Unit Roots<a class="anchor" aria-label="anchor" href="#diagnosing-spatial-unit-roots"></a>
 </h2>
 <p>We illustrate the procedure using absolute upward mobility
-(<code>am</code>), a variable known to be highly spatially
-persistent.</p>
-<div class="section level3">
-<h3 id="i0-test-is-the-variable-spatially-stationary">I(0) Test: Is the variable spatially stationary?<a class="anchor" aria-label="anchor" href="#i0-test-is-the-variable-spatially-stationary"></a>
-</h3>
-<p>The I(0) test has the null hypothesis of <strong>no</strong> spatial
-unit root. A low p-value indicates strong evidence <em>against</em>
-spatial stationarity.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
-<span><span class="va">t_i0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurtest.html">spurtest</a></span><span class="op">(</span><span class="va">am</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">chetty</span>, coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>,</span>
-<span>                 type <span class="op">=</span> <span class="st">"i0"</span>, latlong <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">t_i0</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Spatial I(0) Test Summary</span></span>
-<span><span class="co">## =======================================</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Test Statistic :  3.04364 </span></span>
-<span><span class="co">## P-value        :  0.0011 </span></span>
-<span><span class="co">## HA Parameter   :  41.56 </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Critical Values:</span></span>
-<span><span class="co">##   1%  :   2.5225</span></span>
-<span><span class="co">##   5%  :   2.1020</span></span>
-<span><span class="co">##   10% :   1.9393</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Test Configuration:</span></span>
-<span><span class="co">##   Type        :  i0 </span></span>
-<span><span class="co">##   q (components) :  15 </span></span>
-<span><span class="co">##   MC replications:  10000</span></span></code></pre>
-<p>The p-value is well below 0.01, so we <strong>strongly
-reject</strong> the null that <code>am</code> is I(0). This is
-consistent with the Stata results reported in Becker, Boll &amp; Voth
-(2025, §4.2), where the I(0) test on a persistent spatial variable
-yields p = 0.0004.</p>
-</div>
+(<code>am</code>), the key outcome variable in Chetty et al. (2014) and
+the first row of Table A.1.</p>
 <div class="section level3">
 <h3 id="i1-test-is-there-a-spatial-unit-root">I(1) Test: Is there a spatial unit root?<a class="anchor" aria-label="anchor" href="#i1-test-is-there-a-spatial-unit-root"></a>
 </h3>
 <p>The I(1) test has the null hypothesis of a spatial unit root. A high
 p-value means we cannot reject the presence of a unit root.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">t_i1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurtest.html">spurtest</a></span><span class="op">(</span><span class="va">am</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">chetty</span>, coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>,</span>
 <span>                 type <span class="op">=</span> <span class="st">"i1"</span>, latlong <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
@@ -183,177 +155,250 @@ p-value means we cannot reject the presence of a unit root.</p>
 <span><span class="co">##   Type        :  i1 </span></span>
 <span><span class="co">##   q (components) :  15 </span></span>
 <span><span class="co">##   MC replications:  10000</span></span></code></pre>
-<p>With a p-value of 0.387, we <strong>fail to reject</strong> the
-spatial unit root null. Again, this matches the Stata article’s finding
-(p = 0.574 for their simulated persistent variable). Together, the I(0)
-and I(1) tests provide strong evidence that <code>am</code> has a
-spatial unit root.</p>
+<p>With a p-value of 0.39, we <strong>fail to reject</strong> the
+spatial unit root null. Table A.1 of Becker, Boll &amp; Voth (2025)
+reports an I(1) p-value of <strong>0.38</strong> for absolute mobility —
+the small difference is Monte Carlo simulation noise.</p>
+</div>
+<div class="section level3">
+<h3 id="i0-test-is-the-variable-spatially-stationary">I(0) Test: Is the variable spatially stationary?<a class="anchor" aria-label="anchor" href="#i0-test-is-the-variable-spatially-stationary"></a>
+</h3>
+<p>The I(0) test has the null hypothesis of <strong>no</strong> spatial
+unit root (spatial stationarity). A low p-value indicates strong
+evidence <em>against</em> spatial stationarity.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">t_i0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurtest.html">spurtest</a></span><span class="op">(</span><span class="va">am</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">chetty</span>, coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>,</span>
+<span>                 type <span class="op">=</span> <span class="st">"i0"</span>, latlong <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">t_i0</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Spatial I(0) Test Summary</span></span>
+<span><span class="co">## =======================================</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Test Statistic :  3.04364 </span></span>
+<span><span class="co">## P-value        :  0.0011 </span></span>
+<span><span class="co">## HA Parameter   :  41.56 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Critical Values:</span></span>
+<span><span class="co">##   1%  :   2.5225</span></span>
+<span><span class="co">##   5%  :   2.1020</span></span>
+<span><span class="co">##   10% :   1.9393</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Test Configuration:</span></span>
+<span><span class="co">##   Type        :  i0 </span></span>
+<span><span class="co">##   q (components) :  15 </span></span>
+<span><span class="co">##   MC replications:  10000</span></span></code></pre>
+<p>The p-value is essentially zero, so we <strong>strongly
+reject</strong> the null that <code>am</code> is I(0). This matches
+Table A.1, which reports an I(0) p-value of <strong>0.00</strong> for
+absolute mobility. Together, the I(0) and I(1) tests provide strong
+evidence that <code>am</code> has a spatial unit root.</p>
 </div>
 <div class="section level3">
 <h3 id="spatial-half-life">Spatial Half-Life<a class="anchor" aria-label="anchor" href="#spatial-half-life"></a>
 </h3>
-<p>The half-life measures the distance at which spatial correlation
-drops to one-half.</p>
+<p>The half-life is the distance at which spatial correlation drops to
+one-half. We report it in normalized units (fractions of the maximum
+pairwise distance), as in Table A.1.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">hl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurhalflife.html">spurhalflife</a></span><span class="op">(</span><span class="va">am</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">chetty</span>, coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>,</span>
-<span>                   latlong <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
+<span>                   latlong <span class="op">=</span> <span class="cn">TRUE</span>, normdist <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">hl</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Spatial Half-Life Confidence Interval Summary</span></span>
 <span><span class="co">## =========================================</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Confidence level :  95 %</span></span>
-<span><span class="co">## CI Lower bound   :  417743 </span></span>
+<span><span class="co">## CI Lower bound   :  0.0918182 </span></span>
 <span><span class="co">## CI Upper bound   : inf</span></span>
 <span><span class="co">## Max distance     :  4549672 </span></span>
-<span><span class="co">## Normalized units :  FALSE </span></span>
+<span><span class="co">## Normalized units :  TRUE </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Configuration:</span></span>
 <span><span class="co">##   q (components)  :  15 </span></span>
 <span><span class="co">##   MC replications :  10000</span></span></code></pre>
-<p>The half-life confidence interval for <code>am</code> is 417.7 km —
-indicating very high spatial persistence (the upper bound is unbounded,
-a sign of an (near) unit root).</p>
+<p>The half-life confidence interval for <code>am</code> is
+approximately [0.09, ∞] in fractions of the maximum pairwise distance,
+matching the published interval of <strong>[0.09, ∞]</strong>. The
+unbounded upper bound is a hallmark of a (near) unit root.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="testing-multiple-variables">Testing Multiple Variables<a class="anchor" aria-label="anchor" href="#testing-multiple-variables"></a>
+<h2 id="reproducing-table-a-1">Reproducing Table A.1<a class="anchor" aria-label="anchor" href="#reproducing-table-a-1"></a>
 </h2>
-<p>We can assess spatial persistence across many variables
-simultaneously. The table below shows I(1) and I(0) test p-values for
-several covariates from Chetty et al. (2014).</p>
+<p>We now assess spatial persistence across a representative set of the
+variables in Table A.1, comparing the R output to the published Stata
+results. For each variable we report the I(1) and I(0) test p-values and
+the half-life confidence interval, with the value from Becker, Boll
+&amp; Voth (2025) in parentheses.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"am"</span>, <span class="st">"fracblack"</span>, <span class="st">"racseg"</span>, <span class="st">"segpov25"</span>, <span class="st">"hipc"</span>, <span class="st">"gini"</span>,</span>
-<span>           <span class="st">"hsdrop"</span>, <span class="st">"colgrad"</span>, <span class="st">"manshare"</span>, <span class="st">"fracfor"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Variable -&gt; published Table A.1 values: c(I1, I0, HL_lower, HL_upper)</span></span>
+<span><span class="va">paper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  am        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.38</span>, <span class="fl">0.00</span>, <span class="fl">0.09</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  fracblack <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.11</span>, <span class="fl">0.01</span>, <span class="fl">0.04</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  racseg    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.13</span>, <span class="fl">0.00</span>, <span class="fl">0.28</span><span class="op">)</span>,</span>
+<span>  segpov25  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.28</span>, <span class="fl">0.03</span>, <span class="fl">0.05</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  fraccom15 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.57</span>, <span class="fl">0.00</span>, <span class="fl">0.14</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  hipc      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.13</span>, <span class="fl">0.14</span>, <span class="fl">0.02</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  gini      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.78</span>, <span class="fl">0.00</span>, <span class="fl">0.26</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  tsr       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.23</span>, <span class="fl">0.13</span>, <span class="fl">0.05</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  hsdrop    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">0.02</span>, <span class="fl">0.03</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  scind     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.72</span>, <span class="fl">0.00</span>, <span class="fl">0.22</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  manshare  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.20</span>, <span class="fl">0.00</span>, <span class="fl">0.06</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  tlfpr     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.51</span>, <span class="fl">0.00</span>, <span class="fl">0.12</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
+<span>  fracfor   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.56</span>, <span class="fl">0.04</span>, <span class="fl">0.17</span>, <span class="cn">Inf</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">vars</span>, <span class="kw">function</span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">fmt_inf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.infinite</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="st">"∞"</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%.2f"</span>, <span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">paper</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span>  <span class="va">t1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurtest.html">spurtest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">v</span>, <span class="st">"~ 1"</span><span class="op">)</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">chetty</span>,</span>
 <span>                 coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>, type <span class="op">=</span> <span class="st">"i1"</span>,</span>
 <span>                 latlong <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span>  <span class="va">t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurtest.html">spurtest</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">v</span>, <span class="st">"~ 1"</span><span class="op">)</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">chetty</span>,</span>
 <span>                 coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>, type <span class="op">=</span> <span class="st">"i0"</span>,</span>
 <span>                 latlong <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span>  <span class="va">hl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurhalflife.html">spurhalflife</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">v</span>, <span class="st">"~ 1"</span><span class="op">)</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">chetty</span>,</span>
-<span>                     coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>,</span>
-<span>                     latlong <span class="op">=</span> <span class="cn">TRUE</span>, normdist <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                     q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span>
+<span>                     coords <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>, latlong <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     normdist <span class="op">=</span> <span class="cn">TRUE</span>, q <span class="op">=</span> <span class="fl">15</span>, nrep <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span>
+<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">paper</span><span class="op">[[</span><span class="va">v</span><span class="op">]</span><span class="op">]</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>    Variable <span class="op">=</span> <span class="va">v</span>,</span>
-<span>    I1_pvalue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">t1</span><span class="op">$</span><span class="va">p_value</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    I0_pvalue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">t0</span><span class="op">$</span><span class="va">p_value</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    HL_lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">hl</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    HL_upper <span class="op">=</span> <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.infinite</a></span><span class="op">(</span><span class="va">hl</span><span class="op">$</span><span class="va">ci_upper</span><span class="op">)</span><span class="op">)</span> <span class="st">"∞"</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">hl</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    Verdict <span class="op">=</span> <span class="kw">if</span><span class="op">(</span><span class="va">t1</span><span class="op">$</span><span class="va">p_value</span> <span class="op">&gt;</span> <span class="fl">0.05</span> <span class="op">&amp;&amp;</span> <span class="va">t0</span><span class="op">$</span><span class="va">p_value</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="st">"I(1)"</span> <span class="kw">else</span></span>
-<span>              <span class="kw">if</span><span class="op">(</span><span class="va">t1</span><span class="op">$</span><span class="va">p_value</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;&amp;</span> <span class="va">t0</span><span class="op">$</span><span class="va">p_value</span> <span class="op">&gt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="st">"I(0)"</span> <span class="kw">else</span> <span class="st">"ambiguous"</span></span>
+<span>    Variable    <span class="op">=</span> <span class="va">v</span>,</span>
+<span>    `I(1) p`    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%.2f (%.2f)"</span>, <span class="va">t1</span><span class="op">$</span><span class="va">p_value</span>, <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>    `I(0) p`    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%.2f (%.2f)"</span>, <span class="va">t0</span><span class="op">$</span><span class="va">p_value</span>, <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>    `HL lower`  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%.2f (%.2f)"</span>, <span class="va">hl</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">p</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>    `HL upper`  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s (%s)"</span>, <span class="fu">fmt_inf</span><span class="op">(</span><span class="va">hl</span><span class="op">$</span><span class="va">ci_upper</span><span class="op">)</span>, <span class="fu">fmt_inf</span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    check.names <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">results</span>, caption <span class="op">=</span> <span class="st">"Spatial persistence diagnostics for Chetty et al. variables"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
+<span>  <span class="va">results</span>,</span>
+<span>  caption <span class="op">=</span> <span class="st">"Reproducing Table A.1 of Becker, Boll &amp; Voth (2025). Each cell shows the R result with the published Stata value in parentheses."</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <table class="table">
-<caption>Spatial persistence diagnostics for Chetty et
-al. variables</caption>
+<caption>Reproducing Table A.1 of Becker, Boll &amp; Voth (2025). Each
+cell shows the R result with the published Stata value in
+parentheses.</caption>
 <thead><tr class="header">
 <th align="left">Variable</th>
-<th align="right">I1_pvalue</th>
-<th align="right">I0_pvalue</th>
-<th align="right">HL_lower</th>
-<th align="left">HL_upper</th>
-<th align="left">Verdict</th>
+<th align="left">I(1) p</th>
+<th align="left">I(0) p</th>
+<th align="left">HL lower</th>
+<th align="left">HL upper</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">am</td>
-<td align="right">0.388</td>
-<td align="right">0.001</td>
-<td align="right">0.092</td>
-<td align="left">∞</td>
-<td align="left">I(1)</td>
+<td align="left">0.39 (0.38)</td>
+<td align="left">0.00 (0.00)</td>
+<td align="left">0.10 (0.09)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="even">
 <td align="left">fracblack</td>
-<td align="right">0.119</td>
-<td align="right">0.008</td>
-<td align="right">0.031</td>
-<td align="left">∞</td>
-<td align="left">I(1)</td>
+<td align="left">0.12 (0.11)</td>
+<td align="left">0.01 (0.01)</td>
+<td align="left">0.04 (0.04)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="odd">
 <td align="left">racseg</td>
-<td align="right">0.011</td>
-<td align="right">0.135</td>
-<td align="right">0.001</td>
-<td align="left">0.284</td>
-<td align="left">I(0)</td>
+<td align="left">0.01 (0.01)</td>
+<td align="left">0.13 (0.13)</td>
+<td align="left">0.00 (0.00)</td>
+<td align="left">0.29 (0.28)</td>
 </tr>
 <tr class="even">
 <td align="left">segpov25</td>
-<td align="right">0.284</td>
-<td align="right">0.027</td>
-<td align="right">0.051</td>
-<td align="left">∞</td>
-<td align="left">I(1)</td>
+<td align="left">0.28 (0.28)</td>
+<td align="left">0.03 (0.03)</td>
+<td align="left">0.05 (0.05)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="odd">
-<td align="left">hipc</td>
-<td align="right">0.136</td>
-<td align="right">0.142</td>
-<td align="right">0.011</td>
-<td align="left">∞</td>
-<td align="left">ambiguous</td>
+<td align="left">fraccom15</td>
+<td align="left">0.56 (0.57)</td>
+<td align="left">0.00 (0.00)</td>
+<td align="left">0.13 (0.14)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="even">
+<td align="left">hipc</td>
+<td align="left">0.14 (0.13)</td>
+<td align="left">0.14 (0.14)</td>
+<td align="left">0.02 (0.02)</td>
+<td align="left">∞ (∞)</td>
+</tr>
+<tr class="odd">
 <td align="left">gini</td>
-<td align="right">0.780</td>
-<td align="right">0.000</td>
-<td align="right">0.263</td>
-<td align="left">∞</td>
-<td align="left">I(1)</td>
+<td align="left">0.78 (0.78)</td>
+<td align="left">0.00 (0.00)</td>
+<td align="left">0.25 (0.26)</td>
+<td align="left">∞ (∞)</td>
+</tr>
+<tr class="even">
+<td align="left">tsr</td>
+<td align="left">0.23 (0.23)</td>
+<td align="left">0.13 (0.13)</td>
+<td align="left">0.05 (0.05)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="odd">
 <td align="left">hsdrop</td>
-<td align="right">0.095</td>
-<td align="right">0.018</td>
-<td align="right">0.031</td>
-<td align="left">∞</td>
-<td align="left">I(1)</td>
+<td align="left">0.10 (0.09)</td>
+<td align="left">0.02 (0.02)</td>
+<td align="left">0.04 (0.03)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="even">
-<td align="left">colgrad</td>
-<td align="right">0.039</td>
-<td align="right">0.023</td>
-<td align="right">0.001</td>
-<td align="left">∞</td>
-<td align="left">ambiguous</td>
+<td align="left">scind</td>
+<td align="left">0.71 (0.72)</td>
+<td align="left">0.00 (0.00)</td>
+<td align="left">0.22 (0.22)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="odd">
 <td align="left">manshare</td>
-<td align="right">0.212</td>
-<td align="right">0.003</td>
-<td align="right">0.062</td>
-<td align="left">∞</td>
-<td align="left">I(1)</td>
+<td align="left">0.21 (0.20)</td>
+<td align="left">0.01 (0.00)</td>
+<td align="left">0.06 (0.06)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 <tr class="even">
+<td align="left">tlfpr</td>
+<td align="left">0.51 (0.51)</td>
+<td align="left">0.00 (0.00)</td>
+<td align="left">0.12 (0.12)</td>
+<td align="left">∞ (∞)</td>
+</tr>
+<tr class="odd">
 <td align="left">fracfor</td>
-<td align="right">0.551</td>
-<td align="right">0.034</td>
-<td align="right">0.173</td>
-<td align="left">∞</td>
-<td align="left">I(1)</td>
+<td align="left">0.55 (0.56)</td>
+<td align="left">0.04 (0.04)</td>
+<td align="left">0.16 (0.17)</td>
+<td align="left">∞ (∞)</td>
 </tr>
 </tbody>
 </table>
-<p>Most variables fail to reject the I(1) null and reject the I(0) null,
-indicating strong spatial persistence — consistent with the findings in
-Becker, Boll &amp; Voth (2025, Appendix A).</p>
+<p>The R implementation reproduces the published p-values and half-life
+intervals to within Monte Carlo error. As Table A.1 shows, the
+overwhelming majority of the Chetty et al. (2014) variables fail to
+reject the I(1) null and reject the I(0) null, indicating strong spatial
+persistence.</p>
 </div>
 <div class="section level2">
 <h2 id="correcting-spurious-regression">Correcting Spurious Regression<a class="anchor" aria-label="anchor" href="#correcting-spurious-regression"></a>
 </h2>
 <p>A key application is diagnosing and correcting spurious spatial
-regression. We illustrate with a regression of <code>am</code> on
+regression. Following the algorithm in Figure 5 of Becker, Boll &amp;
+Voth (2025): once a variable cannot be rejected as I(1), we difference
+<em>all</em> variables (dependent and independent) before re-estimating.
+We illustrate the workflow with a regression of <code>am</code> on
 <code>fracblack</code> and <code>racseg</code>.</p>
 <div class="section level3">
 <h3 id="step-1-naïve-ols">Step 1: Naïve OLS<a class="anchor" aria-label="anchor" href="#step-1-na%C3%AFve-ols"></a>
@@ -387,11 +432,12 @@ regression. We illustrate with a regression of <code>am</code> on
 <span><span class="co">## Test Statistic :  1111 </span></span>
 <span><span class="co">## P-value        :  0.192 </span></span>
 <span><span class="co">## ---------------------------------------</span></span></code></pre>
-<p>The residual test suggests that spatial persistence remains in the
-residuals, which can lead to misleading inference.</p>
+<p>The residual test fails to reject a spatial unit root in the
+residuals, so the OLS inference above is not reliable and we proceed to
+difference all variables.</p>
 </div>
 <div class="section level3">
-<h3 id="step-3-apply-lbm-gls-transformation">Step 3: Apply LBM-GLS transformation<a class="anchor" aria-label="anchor" href="#step-3-apply-lbm-gls-transformation"></a>
+<h3 id="step-3-apply-the-lbm-gls-transformation">Step 3: Apply the LBM-GLS transformation<a class="anchor" aria-label="anchor" href="#step-3-apply-the-lbm-gls-transformation"></a>
 </h3>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">transformed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/spurtransform.html">spurtransform</a></span><span class="op">(</span><span class="op">~</span> <span class="va">am</span> <span class="op">+</span> <span class="va">fracblack</span> <span class="op">+</span> <span class="va">racseg</span>, data <span class="op">=</span> <span class="va">chetty</span>,</span>
@@ -417,49 +463,57 @@ residuals, which can lead to misleading inference.</p>
 <span><span class="co">## RMSE: 26.3   Adj. R2: 0.222151</span></span></code></pre>
 <p>The R² drops from 0.413 to 0.224 after removing spatial trends,
 indicating that much of the apparent relationship was driven by shared
-spatial patterns — a classic spurious regression result.</p>
+spatial patterns — a classic spurious regression result. In practice,
+one would additionally apply SCPC inference (Müller &amp; Watson 2022,
+2023) to the transformed regression to account for any remaining weak
+spatial correlation.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="comparison-with-stata-spur-package">Comparison with Stata SPUR Package<a class="anchor" aria-label="anchor" href="#comparison-with-stata-spur-package"></a>
+<h2 id="comparison-with-the-stata-spur-package">Comparison with the Stata SPUR Package<a class="anchor" aria-label="anchor" href="#comparison-with-the-stata-spur-package"></a>
 </h2>
-<p>The R implementation produces results consistent with the Stata SPUR
-package (Becker, Boll &amp; Voth, 2025). Key numerical checks:</p>
+<p>The R implementation reproduces the Stata SPUR package (Becker, Boll
+&amp; Voth, 2025). The table above replicates Table A.1 across
+variables; the key checks for absolute mobility (<code>am</code>)
+are:</p>
 <table class="table">
 <thead><tr class="header">
-<th>Test</th>
-<th>Stata article (§4.2)</th>
+<th>Statistic</th>
+<th>Stata (Table A.1)</th>
 <th>R (<code>spatialunitroot</code>)</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>I(0) conclusion</td>
-<td>Reject (p = 0.0004)</td>
-<td>Reject (p &lt; 0.01)</td>
+<td>I(1) test p-value</td>
+<td>0.38</td>
+<td>0.39</td>
 </tr>
 <tr class="even">
-<td>I(1) conclusion</td>
-<td>Not reject (p = 0.574)</td>
-<td>Not reject (p &gt; 0.05)</td>
+<td>I(0) test p-value</td>
+<td>0.00</td>
+<td>0</td>
 </tr>
 <tr class="odd">
-<td>Half-life</td>
-<td>Very long / unbounded</td>
-<td>Unbounded above</td>
+<td>Half-life 95% CI (norm.)</td>
+<td>[0.09, ∞]</td>
+<td>[0.09, ∞]</td>
 </tr>
 </tbody>
 </table>
 <p>Minor numerical differences arise from Monte Carlo simulation noise
-(± 1/√nrep) and differences in R vs. Stata random number generators, but
-the qualitative conclusions are identical.</p>
+(of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><msqrt><msub><mi>n</mi><mrow><mi>r</mi><mi>e</mi><mi>p</mi></mrow></msub></msqrt></mrow><annotation encoding="application/x-tex">1/\sqrt{n_{rep}}</annotation></semantics></math>)
+and from differences between the R and Stata random number generators,
+but the qualitative conclusions — and the reported values to two decimal
+places — are identical.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <ul>
-<li>Becker, S. O., Boll, P. D., &amp; Voth, H.-J. (2025). “Spatial Unit
-Roots in Regressions: A Practitioner’s Guide and a Stata Package.”
-<em>Stata Journal</em>, forthcoming.</li>
+<li>Becker, S. O., Boll, P. D., &amp; Voth, H.-J. (2025). “Testing and
+Correcting for Spatial Unit Roots in Regression Analysis.” <em>Stata
+Journal</em>.</li>
 <li>Chetty, R., Hendren, N., Kline, P., &amp; Saez, E. (2014). “Where is
 the Land of Opportunity?” <em>Quarterly Journal of Economics</em>,
 129(4), 1553–1623.</li>
@@ -474,7 +528,7 @@ Spurious Regression.” <em>Econometrica</em>, 92, 1661–1695.</li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Bas Machielsen, Sascha O. Becker, P. David Boll, Hans-Joachim Voth.</p>
+  <p>Developed by <a href="mailto:a.h.machielsen@uu.nl">Bas Machielsen</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

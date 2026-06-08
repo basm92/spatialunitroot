@@ -58,21 +58,18 @@
 <!-- badges: start -->
 <!-- badges: end -->
 <p>An R implementation of the spatial unit root methods of Müller &amp; Watson (2024, <em>Econometrica</em>), based on the <a href="https://github.com/pdavidboll/SPUR" class="external-link">SPUR Stata package</a> by Becker, Boll &amp; Voth (2025).</p>
-<p><strong>R developer &amp; maintainer</strong>: Bas Machielsen<br><strong>Original Stata code</strong>: Sascha O. Becker, P. David Boll, Hans-Joachim Voth</p>
+<p><strong>R developer &amp; maintainer</strong>: Bas Machielsen<br><strong>Original Stata code</strong> due to Sascha O. Becker, P. David Boll, Hans-Joachim Voth</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"pdavidboll/SPUR"</span>, subdir <span class="op">=</span> <span class="st">"spatialunitroot"</span><span class="op">)</span>  <span class="co"># adjust once on GitHub</span></span></code></pre></div>
-<p>Or from local source:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"path/to/spatialunitroot"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"basm92/spatialunitroot"</span><span class="op">)</span> </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/basm92/spatialunitroot" class="external-link">spatialunitroot</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/" class="external-link">fixest</a></span><span class="op">)</span></span>
 <span></span>
@@ -153,7 +150,7 @@
 <h2 id="coordinates">Coordinates<a class="anchor" aria-label="anchor" href="#coordinates"></a>
 </h2>
 <p>Spatial coordinates must be provided as <code>s_*</code> variables (for Stata compatibility) or via a formula:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coords</span> <span class="op">=</span> <span class="op">~</span> <span class="va">s_1</span> <span class="op">+</span> <span class="va">s_2</span>                 <span class="co"># latitude, longitude (with latlong = TRUE)</span></span>
 <span><span class="va">coords</span> <span class="op">=</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span>                     <span class="co"># Euclidean coordinates</span></span></code></pre></div>
 </div>
@@ -161,7 +158,7 @@
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <ul>
-<li>Becker, S. O., Boll, P. D., &amp; Voth, H.-J. (2025). “Spatial Unit Roots in Regressions: A Practitioner’s Guide and a Stata Package.” <em>Stata Journal</em>, forthcoming.</li>
+<li>Becker, S. O., Boll, P. D., &amp; Voth, H. J. (2025). Spatial Unit Roots in Regressions: A Practitioner’s Guide and a Stata Package. <em>Stata Journal</em>.</li>
 <li>Müller, U. K. &amp; Watson, M. W. (2024). “Spatial Unit Roots and Spurious Regression.” <em>Econometrica</em>, 92, 1661–1695.</li>
 <li>Müller, U. K. &amp; Watson, M. W. (2022). “Spatial Correlation Robust Inference.” <em>Econometrica</em>, 90, 2901–2935.</li>
 </ul>
@@ -200,10 +197,8 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Bas Machielsen <br><small class="roles"> Author, maintainer, copyright holder </small>   </li>
-<li>Sascha O. Becker <br><small class="roles"> Author </small>   </li>
-<li>P. David Boll <br><small class="roles"> Author </small>   </li>
-<li>Hans-Joachim Voth <br><small class="roles"> Author </small>   </li>
+<li>
+<a href="mailto:a.h.machielsen@uu.nl">Bas Machielsen</a> <br><small class="roles"> Author, maintainer, copyright holder </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -215,7 +210,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Bas Machielsen, Sascha O. Becker, P. David Boll, Hans-Joachim Voth.</p>
+  <p>Developed by <a href="mailto:a.h.machielsen@uu.nl">Bas Machielsen</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
