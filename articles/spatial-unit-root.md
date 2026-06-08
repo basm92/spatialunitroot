@@ -322,7 +322,7 @@ summary(m_trans)
     ## Observations: 693
     ## Standard-errors: IID 
     ##                  Estimate Std. Error       t value   Pr(>|t|)    
-    ## (Intercept) -3.360000e-16   0.999411 -3.360000e-16 1.0000e+00    
+    ## (Intercept) -9.350000e-16   0.999411 -9.350000e-16 1.0000e+00    
     ## h_fracblack -1.297061e+01   2.095557 -6.189575e+00 1.0348e-09 ***
     ## h_racseg    -1.151500e+01   1.107396 -1.039827e+01  < 2.2e-16 ***
     ## ---
