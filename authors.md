@@ -9,7 +9,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/basm92/spatialunitroot/blob/HEAD/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/basm92/spatialunitroot/blob/main/DESCRIPTION)
 
 Machielsen B (2026). *spatialunitroot: Spatial Unit Root Diagnostic
 Tests and Transformations*. R package version 0.1.0,

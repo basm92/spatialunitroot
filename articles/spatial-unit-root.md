@@ -32,6 +32,7 @@ across 722 US commuting zones. This is the same data the Stata package
 uses in its Appendix A.
 
 ``` r
+
 data(chetty)
 str(chetty[, 1:10], vec.len = 2)
 ```
@@ -65,6 +66,7 @@ The I(1) test has the null hypothesis of a spatial unit root. A high
 p-value means we cannot reject the presence of a unit root.
 
 ``` r
+
 set.seed(42)
 t_i1 <- spurtest(am ~ 1, data = chetty, coords = ~ s_1 + s_2,
                  type = "i1", latlong = TRUE, q = 15, nrep = 10000)
@@ -101,6 +103,7 @@ The I(0) test has the null hypothesis of **no** spatial unit root
 *against* spatial stationarity.
 
 ``` r
+
 set.seed(42)
 t_i0 <- spurtest(am ~ 1, data = chetty, coords = ~ s_1 + s_2,
                  type = "i0", latlong = TRUE, q = 15, nrep = 10000)
@@ -137,6 +140,7 @@ one-half. We report it in normalized units (fractions of the maximum
 pairwise distance), as in Table A.1.
 
 ``` r
+
 set.seed(42)
 hl <- spurhalflife(am ~ 1, data = chetty, coords = ~ s_1 + s_2,
                    latlong = TRUE, normdist = TRUE, q = 15, nrep = 10000)
@@ -171,6 +175,7 @@ the half-life confidence interval, with the value from Becker, Boll &
 Voth (2025) in parentheses.
 
 ``` r
+
 # Variable -> published Table A.1 values: c(I1, I0, HL_lower, HL_upper)
 paper <- list(
   am        = c(0.38, 0.00, 0.09, Inf),
@@ -237,7 +242,7 @@ knitr::kable(
 | fracfor   | 0.55 (0.56) | 0.04 (0.04) | 0.16 (0.17) | ∞ (∞)       |
 
 Reproducing Table A.1 of Becker, Boll & Voth (2025). Each cell shows the
-R result with the published Stata value in parentheses.
+R result with the published Stata value in parentheses. {.table}
 
 The R implementation reproduces the published p-values and half-life
 intervals to within Monte Carlo error. As Table A.1 shows, the
@@ -257,6 +262,7 @@ illustrate the workflow with a regression of `am` on `fracblack` and
 ### Step 1: Naïve OLS
 
 ``` r
+
 m_ols <- feols(am ~ fracblack + racseg, data = chetty, se = "standard")
 summary(m_ols)
 ```
@@ -275,6 +281,7 @@ summary(m_ols)
 ### Step 2: Test residuals for a spatial unit root
 
 ``` r
+
 set.seed(42)
 t_resid <- spurtest(m_ols, coords = ~ s_1 + s_2,
                     type = "i1resid", latlong = TRUE,
@@ -296,6 +303,7 @@ all variables.
 ### Step 3: Apply the LBM-GLS transformation
 
 ``` r
+
 transformed <- spurtransform(~ am + fracblack + racseg, data = chetty,
                               coords = ~ s_1 + s_2,
                               prefix = "h_", latlong = TRUE)
@@ -304,6 +312,7 @@ transformed <- spurtransform(~ am + fracblack + racseg, data = chetty,
 ### Step 4: Re-estimate on transformed data
 
 ``` r
+
 m_trans <- feols(h_am ~ h_fracblack + h_racseg, data = transformed,
                  se = "standard")
 summary(m_trans)
@@ -313,7 +322,7 @@ summary(m_trans)
     ## Observations: 693
     ## Standard-errors: IID 
     ##                  Estimate Std. Error       t value   Pr(>|t|)    
-    ## (Intercept) -6.940000e-16   0.999411 -6.950000e-16 1.0000e+00    
+    ## (Intercept) -9.350000e-16   0.999411 -9.350000e-16 1.0000e+00    
     ## h_fracblack -1.297061e+01   2.095557 -6.189575e+00 1.0348e-09 ***
     ## h_racseg    -1.151500e+01   1.107396 -1.039827e+01  < 2.2e-16 ***
     ## ---

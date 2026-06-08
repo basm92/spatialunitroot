@@ -14,6 +14,7 @@ Hans-Joachim Voth
 ## Installation
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("basm92/spatialunitroot") 
 ```
@@ -21,6 +22,7 @@ remotes::install_github("basm92/spatialunitroot")
 ## Quick Start
 
 ``` r
+
 library(spatialunitroot)
 library(fixest)
 
@@ -87,6 +89,7 @@ Spatial coordinates must be provided as `s_*` variables (for Stata
 compatibility) or via a formula:
 
 ``` r
+
 coords = ~ s_1 + s_2                 # latitude, longitude (with latlong = TRUE)
 coords = ~ x + y                     # Euclidean coordinates
 ```
