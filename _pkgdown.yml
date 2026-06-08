@@ -1,0 +1,34 @@
+url: https://basm92.github.io/spatialunitroot/
+template:
+  bootstrap: 5
+
+reference:
+  - title: "Spatial Unit Root Tests"
+    desc: "Diagnostic tests for spatial unit roots"
+    contents:
+      - spurtest
+      - spurtest_i1
+      - spurtest_i0
+      - spurtest_i1resid
+      - spurtest_i0resid
+
+  - title: "Spatial Transformations"
+    desc: "Spatial differencing to remove unit roots"
+    contents:
+      - spurtransform
+
+  - title: "Spatial Half-Life"
+    desc: "Confidence intervals for spatial persistence"
+    contents:
+      - spurhalflife
+
+  - title: "Datasets"
+    desc: "Example datasets"
+    contents:
+      - chetty
+
+articles:
+  - title: "Vignettes"
+    navbar: ~
+    contents:
+      - spatial-unit-root

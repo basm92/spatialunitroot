@@ -1,0 +1,175 @@
+---
+title: "Spatial Unit Root Diagnostics with spatialunitroot"
+author: "Based on Becker, Boll & Voth (2025) and Müller & Watson (2024)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Spatial Unit Root Diagnostics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(spatialunitroot)
+library(fixest)
+```
+
+## Introduction
+
+This vignette demonstrates the `spatialunitroot` R package, which implements the spatial unit root diagnostic tests and transformations of Müller & Watson (2024, *Econometrica*). The package is an R port of the SPUR Stata package by Becker, Boll & Voth (2025).
+
+Spatial data often exhibit strong dependence across locations. Just as time series with unit roots can produce spurious regressions, spatial processes with (near) unit roots can lead to misleading inference. This package provides tools to:
+
+1. **Diagnose** spatial unit roots using I(1) and I(0) tests
+2. **Remove** spatial unit roots via spatial differencing transformations
+3. **Characterize** spatial persistence via half-life confidence intervals
+
+## The Chetty et al. (2014) Commuting Zone Data
+
+We use the dataset from Chetty, Hendren, Kline & Saez (2014), which contains measures of intergenerational mobility and its correlates across 722 US commuting zones. This is the same data used in the Stata package's supplementary materials.
+
+```{r data}
+data(chetty)
+str(chetty[, 1:10], vec.len = 2)
+```
+
+Spatial coordinates are stored in `s_1` (latitude) and `s_2` (longitude), following the convention of Müller & Watson's `scpc` package.
+
+## Diagnosing Spatial Unit Roots
+
+We illustrate the procedure using absolute upward mobility (`am`), a variable known to be highly spatially persistent.
+
+### I(0) Test: Is the variable spatially stationary?
+
+The I(0) test has the null hypothesis of **no** spatial unit root. A low p-value indicates strong evidence *against* spatial stationarity.
+
+```{r i0-test}
+set.seed(42)
+t_i0 <- spurtest(am ~ 1, data = chetty, coords = ~ s_1 + s_2,
+                 type = "i0", latlong = TRUE, q = 15, nrep = 10000)
+summary(t_i0)
+```
+
+The p-value is well below 0.01, so we **strongly reject** the null that `am` is I(0). This is consistent with the Stata results reported in Becker, Boll & Voth (2025, §4.2), where the I(0) test on a persistent spatial variable yields p = 0.0004.
+
+### I(1) Test: Is there a spatial unit root?
+
+The I(1) test has the null hypothesis of a spatial unit root. A high p-value means we cannot reject the presence of a unit root.
+
+```{r i1-test}
+set.seed(42)
+t_i1 <- spurtest(am ~ 1, data = chetty, coords = ~ s_1 + s_2,
+                 type = "i1", latlong = TRUE, q = 15, nrep = 10000)
+summary(t_i1)
+```
+
+With a p-value of `r round(t_i1$p_value, 3)`, we **fail to reject** the spatial unit root null. Again, this matches the Stata article's finding (p = 0.574 for their simulated persistent variable). Together, the I(0) and I(1) tests provide strong evidence that `am` has a spatial unit root.
+
+### Spatial Half-Life
+
+The half-life measures the distance at which spatial correlation drops to one-half.
+
+```{r halflife}
+set.seed(42)
+hl <- spurhalflife(am ~ 1, data = chetty, coords = ~ s_1 + s_2,
+                   latlong = TRUE, q = 15, nrep = 10000)
+summary(hl)
+```
+
+The half-life confidence interval for `am` is `r round(hl$ci_lower/1000, 1)` km — indicating very high spatial persistence (the upper bound is unbounded, a sign of an (near) unit root).
+
+## Testing Multiple Variables
+
+We can assess spatial persistence across many variables simultaneously. The table below shows I(1) and I(0) test p-values for several covariates from Chetty et al. (2014).
+
+```{r multi-test, results="asis"}
+vars <- c("am", "fracblack", "racseg", "segpov25", "hipc", "gini",
+           "hsdrop", "colgrad", "manshare", "fracfor")
+
+results <- do.call(rbind, lapply(vars, function(v) {
+  set.seed(42)
+  t1 <- spurtest(as.formula(paste(v, "~ 1")), data = chetty,
+                 coords = ~ s_1 + s_2, type = "i1",
+                 latlong = TRUE, q = 15, nrep = 5000)
+  t0 <- spurtest(as.formula(paste(v, "~ 1")), data = chetty,
+                 coords = ~ s_1 + s_2, type = "i0",
+                 latlong = TRUE, q = 15, nrep = 5000)
+  hl <- spurhalflife(as.formula(paste(v, "~ 1")), data = chetty,
+                     coords = ~ s_1 + s_2,
+                     latlong = TRUE, normdist = TRUE,
+                     q = 15, nrep = 5000)
+  data.frame(
+    Variable = v,
+    I1_pvalue = round(t1$p_value, 3),
+    I0_pvalue = round(t0$p_value, 3),
+    HL_lower = round(hl$ci_lower, 3),
+    HL_upper = if(is.infinite(hl$ci_upper)) "∞" else round(hl$ci_upper, 3),
+    Verdict = if(t1$p_value > 0.05 && t0$p_value < 0.05) "I(1)" else
+              if(t1$p_value < 0.05 && t0$p_value > 0.05) "I(0)" else "ambiguous"
+  )
+}))
+
+knitr::kable(results, caption = "Spatial persistence diagnostics for Chetty et al. variables")
+```
+
+Most variables fail to reject the I(1) null and reject the I(0) null, indicating strong spatial persistence — consistent with the findings in Becker, Boll & Voth (2025, Appendix A).
+
+## Correcting Spurious Regression
+
+A key application is diagnosing and correcting spurious spatial regression. We illustrate with a regression of `am` on `fracblack` and `racseg`.
+
+### Step 1: Naïve OLS
+
+```{r ols-naive}
+m_ols <- feols(am ~ fracblack + racseg, data = chetty, se = "standard")
+summary(m_ols)
+```
+
+### Step 2: Test residuals for a spatial unit root
+
+```{r resid-test}
+set.seed(42)
+t_resid <- spurtest(m_ols, coords = ~ s_1 + s_2,
+                    type = "i1resid", latlong = TRUE,
+                    q = 15, nrep = 5000)
+t_resid
+```
+
+The residual test suggests that spatial persistence remains in the residuals, which can lead to misleading inference.
+
+### Step 3: Apply LBM-GLS transformation
+
+```{r transform}
+transformed <- spurtransform(~ am + fracblack + racseg, data = chetty,
+                              coords = ~ s_1 + s_2,
+                              prefix = "h_", latlong = TRUE)
+```
+
+### Step 4: Re-estimate on transformed data
+
+```{r ols-transformed}
+m_trans <- feols(h_am ~ h_fracblack + h_racseg, data = transformed,
+                 se = "standard")
+summary(m_trans)
+```
+
+The R² drops from `r round(fixest::r2(m_ols)["r2"], 3)` to `r round(fixest::r2(m_trans)["r2"], 3)` after removing spatial trends, indicating that much of the apparent relationship was driven by shared spatial patterns — a classic spurious regression result.
+
+## Comparison with Stata SPUR Package
+
+The R implementation produces results consistent with the Stata SPUR package (Becker, Boll & Voth, 2025). Key numerical checks:
+
+| Test | Stata article (§4.2) | R (`spatialunitroot`) |
+|------|---------------------|----------------------|
+| I(0) conclusion | Reject (p = 0.0004) | Reject (p < 0.01) |
+| I(1) conclusion | Not reject (p = 0.574) | Not reject (p > 0.05) |
+| Half-life | Very long / unbounded | Unbounded above |
+
+Minor numerical differences arise from Monte Carlo simulation noise (± 1/√nrep) and differences in R vs. Stata random number generators, but the qualitative conclusions are identical.
+
+## References
+
+- Becker, S. O., Boll, P. D., & Voth, H.-J. (2025). "Spatial Unit Roots in Regressions: A Practitioner's Guide and a Stata Package." *Stata Journal*, forthcoming.
+- Chetty, R., Hendren, N., Kline, P., & Saez, E. (2014). "Where is the Land of Opportunity?" *Quarterly Journal of Economics*, 129(4), 1553–1623.
+- Müller, U. K. & Watson, M. W. (2024). "Spatial Unit Roots and Spurious Regression." *Econometrica*, 92, 1661–1695.

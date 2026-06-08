@@ -10,3 +10,7 @@
 ^data-raw$
 ^source$
 ^\.claude$
+^docs$
+^_pkgdown\.yml$
+^\.github$
+^vignettes/articles$
