@@ -2,17 +2,10 @@ Package: spatialunitroot
 Type: Package
 Title: Spatial Unit Root Diagnostic Tests and Transformations
 Version: 0.1.0
-Authors@R: c(
+Authors@R:
     person("Bas", "Machielsen", role = c("aut", "cre", "cph"),
            email = "a.h.machielsen@uu.nl",
-           comment = "R implementation"),
-    person("Sascha O.", "Becker", role = "ctb",
-           comment = "Original Stata code"),
-    person("P. David", "Boll", role = "ctb",
-           comment = "Original Stata code"),
-    person("Hans-Joachim", "Voth", role = "ctb",
-           comment = "Original Stata code")
-    )
+           comment = "R implementation")
 Description: Implements spatial unit root diagnostic tests and spatial
     differencing transformations from Muller and Watson (2024, Econometrica).
     Provides functions to test for spatial unit roots (I(1) vs I(0) null
