@@ -2,6 +2,9 @@ url: https://basm92.github.io/spatialunitroot/
 template:
   bootstrap: 5
 
+development:
+  mode: auto
+
 reference:
   - title: "Spatial Unit Root Tests"
     desc: "Diagnostic tests for spatial unit roots"
@@ -26,6 +29,49 @@ reference:
     desc: "Example datasets"
     contents:
       - chetty
+
+  - title: "Package"
+    desc: "Package information"
+    contents:
+      - spatialunitroot-package
+
+  - title: "Internal"
+    desc: "Internal functions (C++ backend and computation)"
+    contents:
+      - apply_transform
+      - check_missing
+      - cluster_matrix
+      - compute_distances
+      - double_center
+      - euclidean_distances
+      - find_ha_parm_i0
+      - find_ha_parm_i1
+      - get_R
+      - getcbar
+      - getcbar_r
+      - getpow_qf
+      - getpow_qf_r
+      - haversine_distances
+      - iso_matrix
+      - lbm_gls_matrix
+      - lvech
+      - nn_matrix
+      - normalize_distances
+      - resolve_coords
+      - sigma_dm
+      - sigma_lbm
+      - sigma_lbm_dm
+      - sigma_residual
+      - spatial_i0_core
+      - spatial_i0_resid_core
+      - spatial_i0_test
+      - spatial_i0_test_residual
+      - spatial_i1_core
+      - spatial_i1_resid_core
+      - spatial_i1_test
+      - spatial_i1_test_residual
+      - spatial_persistence
+      - spatial_persistence_core
 
 articles:
   - title: "Vignettes"

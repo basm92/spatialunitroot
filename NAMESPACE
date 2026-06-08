@@ -17,11 +17,5 @@ export(spurtest_i0resid)
 export(spurtest_i1)
 export(spurtest_i1resid)
 export(spurtransform)
-
-importFrom(Rcpp, evalCpp)
-importFrom(fixest, feols)
-importFrom(stats, as.formula, complete.cases, model.frame, model.matrix,
-           model.response, rnorm, quantile, residuals, setNames,
-           na.pass, terms)
-importFrom(Matrix, Matrix, crossprod, tcrossprod, solve, diag)
+importFrom(Rcpp,evalCpp)
 useDynLib(spatialunitroot, .registration = TRUE)

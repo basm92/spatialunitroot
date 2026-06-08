@@ -5,7 +5,10 @@ Spatial Unit Root Diagnostic Tests and Transformations for R
 <!-- badges: start -->
 <!-- badges: end -->
 
-An R implementation of the [SPUR Stata package](https://github.com/pdavidboll/SPUR) by Becker, Boll & Voth (2025), implementing the spatial unit root methods of Müller & Watson (2024, *Econometrica*).
+An R implementation of the spatial unit root methods of Müller & Watson (2024, *Econometrica*), based on the [SPUR Stata package](https://github.com/pdavidboll/SPUR) by Becker, Boll & Voth (2025).
+
+**R developer & maintainer**: Bas Machielsen  
+**Original Stata code**: Sascha O. Becker, P. David Boll, Hans-Joachim Voth
 
 ## Installation
 

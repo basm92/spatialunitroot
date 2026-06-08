@@ -6,17 +6,15 @@
 \alias{spatialunitroot-package}
 \title{spatialunitroot: Spatial Unit Root Diagnostic Tests and Transformations}
 \description{
-Implements spatial unit root diagnostic tests and spatial differencing
-transformations from Mueller and Watson (2024, Econometrica). Provides
-functions to test for spatial unit roots (I(1) vs I(0) null hypotheses),
-compute spatial half-life confidence intervals, and apply spatial
-transformations (LBM-GLS, nearest-neighbor, isotropic, cluster) to
-remove spatial unit roots.
+Implements spatial unit root diagnostic tests and spatial differencing transformations from Muller and Watson (2024, Econometrica). Provides functions to test for spatial unit roots (I(1) vs I(0) null hypotheses), compute spatial half-life confidence intervals, and apply spatial transformations (LBM-GLS, nearest-neighbor, isotropic, cluster) to remove spatial unit roots. Integrates with the 'fixest' package for fixed-effects regression. Based on the SPUR Stata package by Becker, Boll, and Voth.
 }
-\details{
-The package integrates with the \pkg{fixest} package for fixed-effects
-regression.
+\section{Acknowledgements}{
+
+This R package is based on the SPUR Stata package by Sascha O. Becker,
+P. David Boll, and Hans-Joachim Voth, who in turn based their code on
+Matlab replication files from Mueller and Watson (2024).
 }
+
 \section{Main functions}{
 
 \describe{
@@ -42,19 +40,13 @@ Mueller, U. K. and Watson, M. W. (2024).
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/pdavidboll/SPUR}
-  \item Report bugs at \url{https://github.com/pdavidboll/SPUR/issues}
+  \item \url{https://github.com/basm92/spatialunitroot}
+  \item Report bugs at \url{https://github.com/basm92/spatialunitroot/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: P. David Boll \email{david.boll@warwick.ac.uk} (Original Stata code)
+\strong{R implementation & maintainer}: Bas Machielsen \email{bas@machielsen.org}
 
-Authors:
-\itemize{
-  \item P. David Boll \email{david.boll@warwick.ac.uk} (Original Stata code)
-  \item Sascha O. Becker (Original Stata code)
-  \item Hans-Joachim Voth (Original Stata code)
-}
-
+\strong{Original Stata code}: Sascha O. Becker, P. David Boll, Hans-Joachim Voth
 }

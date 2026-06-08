@@ -1,14 +1,24 @@
 #' spatialunitroot: Spatial Unit Root Diagnostic Tests and Transformations
 #'
-#' Implements spatial unit root diagnostic tests and spatial differencing
-#' transformations from Mueller and Watson (2024, Econometrica). Provides
-#' functions to test for spatial unit roots (I(1) vs I(0) null hypotheses),
-#' compute spatial half-life confidence intervals, and apply spatial
-#' transformations (LBM-GLS, nearest-neighbor, isotropic, cluster) to
-#' remove spatial unit roots.
+#' @useDynLib spatialunitroot, .registration = TRUE
+#' @importFrom Rcpp evalCpp
+#'
+#' R implementation of the spatial unit root diagnostic tests and spatial
+#' differencing transformations from Mueller and Watson (2024, Econometrica).
+#' Based on the SPUR Stata package by Becker, Boll, and Voth (2025).
+#'
+#' Provides functions to test for spatial unit roots (I(1) vs I(0) null
+#' hypotheses), compute spatial half-life confidence intervals, and apply
+#' spatial transformations (LBM-GLS, nearest-neighbor, isotropic, cluster)
+#' to remove spatial unit roots.
 #'
 #' The package integrates with the \pkg{fixest} package for fixed-effects
 #' regression.
+#'
+#' @section Acknowledgements:
+#' This R package is based on the SPUR Stata package by Sascha O. Becker,
+#' P. David Boll, and Hans-Joachim Voth, who in turn based their code on
+#' Matlab replication files from Mueller and Watson (2024).
 #'
 #' @section Main functions:
 #' \describe{
@@ -29,6 +39,11 @@
 #' Mueller, U. K. and Watson, M. W. (2024).
 #' "Spatial Unit Roots and Spurious Regression."
 #' \emph{Econometrica}, 92, 1661-1695.
+#'
+#' @author
+#' \strong{R implementation & maintainer}: Bas Machielsen \email{bas@machielsen.org}
+#'
+#' \strong{Original Stata code}: Sascha O. Becker, P. David Boll, Hans-Joachim Voth
 #'
 #' @docType package
 #' @name spatialunitroot-package

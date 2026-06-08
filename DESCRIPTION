@@ -3,10 +3,12 @@ Type: Package
 Title: Spatial Unit Root Diagnostic Tests and Transformations
 Version: 0.1.0
 Authors@R: c(
+    person("Bas", "Machielsen", role = c("aut", "cre", "cph"),
+           email = "bas@machielsen.org",
+           comment = "R implementation"),
     person("Sascha O.", "Becker", role = "aut",
            comment = "Original Stata code"),
-    person("P. David", "Boll", role = c("aut", "cre"),
-           email = "david.boll@warwick.ac.uk",
+    person("P. David", "Boll", role = "aut",
            comment = "Original Stata code"),
     person("Hans-Joachim", "Voth", role = "aut",
            comment = "Original Stata code")
@@ -17,10 +19,11 @@ Description: Implements spatial unit root diagnostic tests and spatial
     hypotheses), compute spatial half-life confidence intervals, and apply
     spatial transformations (LBM-GLS, nearest-neighbor, isotropic, cluster)
     to remove spatial unit roots. Integrates with the 'fixest' package for
-    fixed-effects regression.
+    fixed-effects regression. Based on the SPUR Stata package by Becker,
+    Boll, and Voth.
 License: MIT + file LICENSE
-URL: https://github.com/pdavidboll/SPUR
-BugReports: https://github.com/pdavidboll/SPUR/issues
+URL: https://github.com/basm92/spatialunitroot
+BugReports: https://github.com/basm92/spatialunitroot/issues
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
